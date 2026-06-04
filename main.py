@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from routers import youtube_router, twitter_router, snapchat_router
+from routers import youtube_router, twitter_router, snapchat_router, linkedin_router
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -52,7 +52,7 @@ app.add_middleware(
 app.include_router(youtube_router)
 app.include_router(twitter_router)
 app.include_router(snapchat_router)
-
+app.include_router(linkedin_router)
 
 # ── Root ──────────────────────────────────────────────────────────────────────
 @app.get("/", tags=["Info"])
