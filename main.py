@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from routers import youtube_router, twitter_router, snapchat_router, linkedin_router
+from routers import youtube_router, twitter_router, snapchat_router, linkedin_router, reddit_router
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -33,7 +33,8 @@ app = FastAPI(
         "|------------|---------------|---------|\n"
         "| YouTube    | `/youtube`    | ✅ Live |\n"
         "| Twitter/X  | `/twitter`    | ✅ Live |\n"
-        "| Snapchat   | `/snapchat`   | 🔧 WIP  |\n\n"
+        "| Snapchat   | `/snapchat`   | ✅ Live   |\n"
+        "| Linkedin   | `/Linkedin`   | 🔧 WIP  |\n\n"
         "**Docs interactives** : [/docs](/docs) · [/redoc](/redoc)"
     ),
     version="1.0.0",
@@ -53,6 +54,7 @@ app.include_router(youtube_router)
 app.include_router(twitter_router)
 app.include_router(snapchat_router)
 app.include_router(linkedin_router)
+app.include_router(reddit_router)
 
 # ── Root ──────────────────────────────────────────────────────────────────────
 @app.get("/", tags=["Info"])
