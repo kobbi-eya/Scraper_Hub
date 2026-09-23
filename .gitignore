@@ -1,1 +1,10 @@
 __pycache__/
+*.pyc
+.venv/
+venv/
+.env
+cache/
+checkpoints/
+story.json
+userProfile.json
+*.log
