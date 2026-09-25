@@ -124,9 +124,6 @@ git push origin feature/ma-fonctionnalite
 
 Ce projet interroge des données publiques de plateformes tierces. L'utilisateur est seul responsable du respect des conditions d'utilisation de chaque plateforme (YouTube, X, Reddit, Snapchat, LinkedIn) et des réglementations applicables (RGPD notamment) dans son usage de l'API.
 
-## Licence
-
-MIT — voir [LICENSE](LICENSE).
 
 ## Soutenir le projet
 
