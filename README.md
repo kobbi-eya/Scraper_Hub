@@ -1,135 +1,133 @@
 # 🕷️ Scraper Hub
 
-API **FastAPI** multi-plateformes pour collecter des données publiques (profils, publications, commentaires, stories…) depuis **YouTube**, **Twitter/X**, **Snapchat**, **Reddit** et **LinkedIn**, avec export en CSV/JSON.
+**API FastAPI unique pour scraper YouTube, Twitter/X, Reddit et Snapchat — sans clé API officielle, sans configuration compliquée.**
 
-> ⚠️ **Usage responsable** : projet à visée éducative et de recherche. Respectez les conditions d'utilisation de chaque plateforme, la législation sur les données personnelles (RGPD, etc.) et la vie privée des personnes. Ne republiez pas de données scrapées.
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/framework-FastAPI-009688)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Status](https://img.shields.io/badge/status-active-brightgreen)]()
 
-## Plateformes supportées
+Scraper Hub regroupe dans **une seule API REST** plusieurs scrapers qui, d'habitude, sont dispersés dans des dizaines de scripts différents : vidéos et commentaires YouTube, profils et tweets Twitter/X, posts Reddit, et (bientôt) Snapchat et LinkedIn. Un seul serveur, une doc Swagger interactive, et des exports CSV/JSON prêts à l'emploi.
 
-| Plateforme | Préfixe | Statut |
-|---|---|---|
-| YouTube | `/youtube` | ✅ Opérationnel |
-| Twitter/X | `/twitter` | ✅ Opérationnel |
-| Snapchat | `/snapchat` | 🔧 En cours |
-| LinkedIn | `/linkedin` | 🔧 En cours |
-| Reddit | `/reddit` | 🔧 Routeur présent |
+## Pourquoi ce projet ?
+
+La plupart des scrapers open source ne couvrent qu'**une seule plateforme** et obligent à jongler entre plusieurs outils, formats de sortie et dépendances. Scraper Hub part d'un constat simple : si tu dois croiser des données YouTube + Twitter + Reddit pour une veille, une étude ou un dataset, tu ne devrais pas avoir besoin de 3 projets différents.
 
 ## Fonctionnalités
 
-- Une API unique, une route par plateforme, documentation interactive Swagger (`/docs`) et ReDoc (`/redoc`)
-- Routes synchrones exécutées dans le threadpool `anyio` (limite portée à 200 threads) pour servir plusieurs clients en parallèle malgré les appels réseau bloquants
-- Export des résultats en **CSV** et **JSON** (dossier `exporters/`)
-- Configuration par variables d'environnement (`pydantic-settings`)
-- CORS ouvert par défaut (à restreindre en production)
+| Plateforme | Statut | Ce que tu peux récupérer |
+|---|---|---|
+| **YouTube** | ✅ Stable | Vidéo, chaîne, recherche, commentaires, export CSV |
+| **Twitter / X** | ✅ Stable | Profil, tweets, thread, transcript, communautés, scrape complet, export CSV/JSON |
+| **Reddit** | ✅ Stable | Posts et threads |
+| **Snapchat** | 🚧 En cours | Profil, stories, spotlight |
+| **LinkedIn** | 🚧 En cours | — |
 
-## Structure du projet
-
-```
-Scraper_Hub/
-├── main.py            # Point d'entrée FastAPI, monte les routers (aucune logique métier)
-├── config.py          # Configuration, lit le fichier .env
-├── routers/           # Endpoints HTTP par plateforme
-├── services/          # Logique de scraping par plateforme
-├── exporters/         # Export CSV / JSON
-├── requirements.txt   # Dépendances
-├── .env.example       # Modèle de configuration
-└── .gitignore
-```
-
-## Installation
-
-**Prérequis** : Python 3.10+ et `pip`.
+## Démarrage rapide
 
 ```bash
 git clone https://github.com/kobbi-eya/Scraper_Hub.git
 cd Scraper_Hub
-
-python -m venv .venv
-source .venv/bin/activate        # Windows : .venv\Scripts\activate
-
 pip install -r requirements.txt
-
-cp .env.example .env             # Windows : copy .env.example .env
-```
-
-## Configuration
-
-Renseignez vos valeurs dans `.env` :
-
-| Variable | Description |
-|---|---|
-| `AUTH_TOKEN` | Cookie `auth_token` d'une session Twitter/X |
-| `CT0` | Cookie `ct0` d'une session Twitter/X |
-| `TWITTER_BEARER` | Bearer token utilisé pour les requêtes Twitter/X |
-
-> 🔒 Ne commitez jamais `.env`. Utilisez un compte dédié, pas votre compte principal. Si un secret a fuité, révoquez-le.
-
-Récupérer `auth_token` et `ct0` : connectez-vous à x.com → outils de développement → *Application* → *Cookies* → `https://x.com`.
-
-## Lancement
-
-```bash
-uvicorn main:app --reload --port 8000
-# ou
 python main.py
 ```
 
-- API : http://localhost:8000
-- Swagger : http://localhost:8000/docs
-- ReDoc : http://localhost:8000/redoc
+L'API tourne alors sur `http://localhost:8000`. Documentation interactive disponible sur :
+- Swagger UI : `http://localhost:8000/docs`
+- ReDoc : `http://localhost:8000/redoc`
 
-## Endpoints
+### Windows
 
-### YouTube (`/youtube`)
+Un script `setup.bat` est fourni pour installer les dépendances automatiquement.
 
-| Route | Description |
-|---|---|
-| `GET /youtube/video?url=...` | Infos d'une vidéo |
-| `GET /youtube/channel?url=...&limit=10` | Vidéos d'une chaîne |
-| `GET /youtube/search?q=...&limit=10` | Recherche |
-| `GET /youtube/comments?url=...&limit=20` | Commentaires d'une vidéo |
-| `GET /youtube/*/export` | Export CSV |
-
-### Twitter/X (`/twitter`)
-
-| Route | Description |
-|---|---|
-| `GET /twitter/profile?username=...` | Profil |
-| `GET /twitter/user/tweets?username=...` | Tweets d'un utilisateur |
-| `GET /twitter/tweet/{id}` | Détail d'un tweet |
-| `GET /twitter/transcript/{id}` | Transcription |
-| `GET /twitter/community/{id}` | Infos d'une communauté |
-| `GET /twitter/community-tweets/{id}` | Tweets d'une communauté |
-| `GET /twitter/start-full-scrape?username=...` | Scraping complet d'un compte |
-| `GET /twitter/export/csv?username=...` | Export CSV |
-| `GET /twitter/export/json?username=...` | Export JSON |
-
-### Snapchat (`/snapchat`) — en cours
-
-| Route | Description |
-|---|---|
-| `GET /snapchat/profile?username=...` | Profil public |
-| `GET /snapchat/stories?username=...` | Stories publiques |
-| `GET /snapchat/spotlight?q=...&limit=10` | Recherche Spotlight |
-
-### Exemple
+## Exemples d'utilisation
 
 ```bash
-curl "http://localhost:8000/youtube/search?q=python&limit=5"
+# Récupérer les infos d'une vidéo YouTube
+curl "http://localhost:8000/youtube/video?url=https://youtube.com/watch?v=XXXX"
+
+# Récupérer les commentaires (20 derniers)
+curl "http://localhost:8000/youtube/comments?url=https://youtube.com/watch?v=XXXX&limit=20"
+
+# Profil Twitter/X
+curl "http://localhost:8000/twitter/profile?username=elonmusk"
+
+# Export CSV des tweets d'un compte
+curl "http://localhost:8000/twitter/export/csv?username=elonmusk" -o tweets.csv
 ```
+
+## Endpoints principaux
+
+<details>
+<summary><b>YouTube</b></summary>
+
+- `GET /youtube/video?url=...`
+- `GET /youtube/channel?url=...&limit=10`
+- `GET /youtube/search?q=...&limit=10`
+- `GET /youtube/comments?url=...&limit=20`
+- `GET /youtube/*/export` (CSV)
+</details>
+
+<details>
+<summary><b>Twitter / X</b></summary>
+
+- `GET /twitter/profile?username=...`
+- `GET /twitter/user/tweets?username=...`
+- `GET /twitter/tweet/{id}`
+- `GET /twitter/transcript/{id}`
+- `GET /twitter/community/{id}`
+- `GET /twitter/community-tweets/{id}`
+- `GET /twitter/start-full-scrape?username=...`
+- `GET /twitter/export/csv?username=...`
+- `GET /twitter/export/json?username=...`
+</details>
+
+<details>
+<summary><b>Snapchat (WIP)</b></summary>
+
+- `GET /snapchat/profile?username=...`
+- `GET /snapchat/stories?username=...`
+- `GET /snapchat/spotlight?q=...&limit=10`
+</details>
 
 ## Stack technique
 
-FastAPI · Uvicorn · pydantic-settings · requests · yt-dlp · youtube-comment-downloader
+- **FastAPI** — framework API, léger et rapide
+- **yt-dlp** — extraction YouTube
+- **youtube-comment-downloader** — commentaires YouTube
+- **anyio** — exécution concurrente des scrapers (jusqu'à 200 threads simultanés)
 
-## Bonnes pratiques
+## Configuration
 
-- Ne versionnez pas les données scrapées (`*.json` de sortie, `cache/`, `checkpoints/`).
-- Limitez la cadence des requêtes pour éviter les blocages.
-- Restreignez `allow_origins` (CORS) avant tout déploiement public.
+Le projet utilise `pydantic-settings` : toute configuration sensible (clés, tokens, cookies) doit être placée dans un fichier `.env` à la racine, **jamais commitée**. Voir `.env.example` *(à ajouter)* pour la liste des variables attendues.
+
+## Roadmap
+
+- [ ] Finaliser le scraper Snapchat
+- [ ] Ajouter le scraper LinkedIn
+- [ ] Authentification par clé API pour l'usage public
+- [ ] Rate limiting configurable
+- [ ] Dockerfile + docker-compose
+- [ ] Tests automatisés (pytest)
 
 ## Contribuer
 
-Forkez le dépôt, créez une branche, puis ouvrez une pull request.
+Les PR sont bienvenues. Pour les gros changements, ouvre d'abord une issue pour en discuter.
 
- 
+```bash
+git checkout -b feature/ma-fonctionnalite
+git commit -m "Ajout: ma fonctionnalité"
+git push origin feature/ma-fonctionnalite
+```
+
+## Avertissement légal
+
+Ce projet interroge des données publiques de plateformes tierces. L'utilisateur est seul responsable du respect des conditions d'utilisation de chaque plateforme (YouTube, X, Reddit, Snapchat, LinkedIn) et des réglementations applicables (RGPD notamment) dans son usage de l'API.
+
+## Licence
+
+MIT — voir [LICENSE](LICENSE).
+
+## Soutenir le projet
+
+Si Scraper Hub te fait gagner du temps, une ⭐ sur le repo aide énormément à sa visibilité. Pour soutenir le développement continu : [GitHub Sponsors](https://github.com/sponsors/kobbi-eya) *(à activer)*.
