@@ -130,4 +130,4 @@ MIT — voir [LICENSE](LICENSE).
 
 ## Soutenir le projet
 
-Si Scraper Hub te fait gagner du temps, une ⭐ sur le repo aide énormément à sa visibilité. Pour soutenir le développement continu : [GitHub Sponsors](https://github.com/sponsors/kobbi-eya) *(à activer)*.
+Si Scraper Hub te fait gagner du temps, une ⭐ sur le repo aide énormément à sa visibilité. Pour soutenir le développement continu : [GitHub Sponsors](https://github.com/sponsors/kobbi-eya) .
